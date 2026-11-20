@@ -1,0 +1,80 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "description": "Keep pinned lucidmodules/* Docker images up to date. See https://github.com/LucidModules/renovate-config",
+  "enabledManagers": [
+    "custom.regex"
+  ],
+  "customManagers": [
+    {
+      "description": "lucidmodules/<image>:<tag> written out in full (CI files, compose files, Dockerfiles)",
+      "customType": "regex",
+      "managerFilePatterns": [
+        "/(^|/)\\.gitlab-ci\\.ya?ml$/",
+        "/(^|/)\\.gitlab/ci/.+\\.ya?ml$/",
+        "/(^|/)(docker-)?compose[^/]*\\.ya?ml$/",
+        "/(^|/)Dockerfile[^/]*$/"
+      ],
+      "matchStrings": [
+        "lucidmodules/(?<depName>docker-[a-z0-9-]+):(?<currentValue>[0-9][\\w.-]*)"
+      ],
+      "packageNameTemplate": "lucidmodules/{{{depName}}}",
+      "depNameTemplate": "lucidmodules/{{{depName}}}",
+      "datasourceTemplate": "docker"
+    },
+    {
+      "description": "Dockerfile ARG holding a tag, marked by a comment on the line above: # renovate: image=lucidmodules/<image>",
+      "customType": "regex",
+      "managerFilePatterns": [
+        "/(^|/)Dockerfile[^/]*$/"
+      ],
+      "matchStrings": [
+        "#\\s*renovate:\\s*image=(?<depName>lucidmodules/docker-[a-z0-9-]+)\\s*\\n\\s*ARG\\s+\\w+=(?<currentValue>[0-9][\\w.-]*)"
+      ],
+      "datasourceTemplate": "docker"
+    }
+  ],
+  "packageRules": [
+    {
+      "description": "PHP version first, then FrankenPHP version (tags <php>-frankenphp1.<minor>.<patch>). FrankenPHP 2.x needs a manual bump.",
+      "matchPackageNames": [
+        "lucidmodules/docker-laravel-php"
+      ],
+      "versioning": "regex:^(?<major>\\d+)\\.(?<minor>\\d+)\\.(?<patch>\\d+)-frankenphp1\\.(?<build>\\d+)\\.(?<revision>\\d+)$"
+    },
+    {
+      "description": "Our images: no cooldown (they are the security fix). Patch updates go in one MR that merges itself when the pipeline passes, so every pin in a project moves together.",
+      "matchPackageNames": [
+        "lucidmodules/**"
+      ],
+      "matchUpdateTypes": [
+        "patch"
+      ],
+      "groupName": "lucidmodules images (patch)",
+      "automerge": true,
+      "automergeType": "pr",
+      "platformAutomerge": true
+    },
+    {
+      "description": "Minor/major (e.g. PHP 8.5 -> 8.6, Composer 2.10 -> 2.11) wait for a person.",
+      "matchPackageNames": [
+        "lucidmodules/**"
+      ],
+      "matchUpdateTypes": [
+        "minor",
+        "major"
+      ],
+      "groupName": "lucidmodules images (minor/major)",
+      "automerge": false
+    }
+  ],
+  "labels": [
+    "dependencies",
+    "renovate"
+  ],
+  "prHourlyLimit": 0,
+  "prConcurrentLimit": 5,
+  "rebaseWhen": "behind-base-branch",
+  "dependencyDashboard": {
+    "enabled": false
+  }
+}
