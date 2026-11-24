@@ -42,7 +42,7 @@
       "versioning": "regex:^(?<major>\\d+)\\.(?<minor>\\d+)\\.(?<patch>\\d+)-frankenphp1\\.(?<build>\\d+)\\.(?<revision>\\d+)$"
     },
     {
-      "description": "Our images: no cooldown (they are the security fix). Patch updates go in one MR that merges itself when the pipeline passes, so every pin in a project moves together.",
+      "description": "Our images: no cooldown (they are the security fix). Patch updates go in one MR so every pin in a project moves together. A Maintainer merges it; automerge stays off until the system is proven safe for an automated account to merge.",
       "matchPackageNames": [
         "lucidmodules/**"
       ],
@@ -50,9 +50,7 @@
         "patch"
       ],
       "groupName": "lucidmodules images (patch)",
-      "automerge": true,
-      "automergeType": "pr",
-      "platformAutomerge": true
+      "automerge": false
     },
     {
       "description": "Minor/major (e.g. PHP 8.5 -> 8.6, Composer 2.10 -> 2.11) wait for a person.",

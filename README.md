@@ -17,7 +17,7 @@ Keeps pinned `lucidmodules/*` image tags up to date:
   ARG DOCKER_LARAVEL_PHP_VERSION=8.5.13-frankenphp1.13.6
   ```
 - compares `docker-laravel-php` tags (`8.5.13-frankenphp1.13.6`) by PHP version, then FrankenPHP version;
-- puts **patch** updates in one MR per project that merges itself when the MR pipeline passes;
+- puts **patch** updates in one MR per project, for a Maintainer to merge (automerge is off for now);
 - puts **minor/major** updates (PHP 8.5 → 8.6, Composer 2.10 → 2.11) in a separate MR that waits for review;
 - proposes only tags already published, with no cooldown, because these images *are* the security fix.
 
